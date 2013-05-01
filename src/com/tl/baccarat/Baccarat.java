@@ -13,6 +13,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnDragListener;
 import android.view.View.OnLongClickListener;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.tl.baccarat.util.SystemUiHider;
@@ -23,16 +25,21 @@ import com.tl.baccarat.util.SystemUiHider;
  * 
  * @see SystemUiHider
  */
-public class Baccarat extends Activity implements OnLongClickListener,OnDragListener{
+public class Baccarat extends Activity implements OnLongClickListener,OnDragListener,OnClickListener{
 	
-	Map<Integer,Event> events;
+	Map<Integer,Event> chips;
 	int chipValue;
 	int bankerBet;
 	int playerBet;
 	int tieBet;
+	LinearLayout actionButtons;
+	Map<Integer,Event> buttons;
+	Button deal;
+	Button clear;
+	Button play;
 	
 	public static enum Event{
-		CHIP10,CHIP25,CHIP100,CHIP1K,DEAL,CLEAN
+		CHIP10,CHIP25,CHIP100,CHIP1K,DEAL,CLEAN,NEWGAME
 	}
 	
 	@Override
@@ -46,51 +53,60 @@ public class Baccarat extends Activity implements OnLongClickListener,OnDragList
 		
 		setContentView(R.layout.activity_baccarat);
 		
-		events = new HashMap<Integer,Event>();
+		//chips
+		chips = new HashMap<Integer,Event>();
 		
-		events.put(R.chip.chips10, Event.CHIP10);
-		events.put(R.chip.chips25, Event.CHIP25);
-		events.put(R.chip.chips100, Event.CHIP100);
-		events.put(R.chip.chips1k, Event.CHIP1K);
+		chips.put(R.chip.chips10, Event.CHIP10);
+		chips.put(R.chip.chips25, Event.CHIP25);
+		chips.put(R.chip.chips100, Event.CHIP100);
+		chips.put(R.chip.chips1k, Event.CHIP1K);
 		
-		for(final Integer entry: events.keySet()) {
+		for(final Integer entry: chips.keySet()) {
 			View chipView = findViewById(entry);
 			chipView.setOnLongClickListener(this);
 			chipView.setTag(entry);
 		}
 		
+		//deal, clear, play buttons
+		actionButtons = (LinearLayout)findViewById(R.id.actionButtons);
 		
+		buttons = new HashMap<Integer,Event>();
+		buttons.put(R.id.deal, Event.DEAL);
+		buttons.put(R.id.clear, Event.CLEAN);
+		buttons.put(R.id.newgame, Event.NEWGAME);
+		
+		for(final Integer entry: buttons.keySet()){
+			Button button = (Button)findViewById(entry);
+			button.setOnClickListener(this);
+			if(entry.equals(R.id.newgame)) button.setVisibility(View.GONE);
+		}
 	}
 	
 	@Override
 	public boolean onLongClick(View v) {
-		final Event e= events.get(v.getId());
+		final Event e= chips.get(v.getId());
 		switch(e){
 			case CHIP10:
 			{
 				chipValue = 10;
-				Log.d(getLocalClassName(), "10!!"+String.valueOf(chipValue));
 				dragEvent(v);
 				break;
 			}
 			case CHIP25:
 			{
 				chipValue = 25;
-				Log.d(getLocalClassName(), "25!!"+String.valueOf(chipValue));
 				dragEvent(v);
 				break;
 			}
 			case CHIP100:
 			{
 				chipValue = 100;
-				Log.d(getLocalClassName(), "100!!"+String.valueOf(chipValue));
 				dragEvent(v);
 				break;
 			}
 			case CHIP1K:
 			{
 				chipValue = 1000;
-				Log.d(getLocalClassName(), "1000!!"+String.valueOf(chipValue));
 				dragEvent(v);
 				break;
 			}
@@ -117,18 +133,34 @@ public class Baccarat extends Activity implements OnLongClickListener,OnDragList
 			return true;
 		case DragEvent.ACTION_DRAG_ENTERED:
 			// Drag has entered view bounds
-			// If called for trash can then scale it.
-			if (view.getId() == R.id.banker || view.getId() == R.id.player || view.getId() == R.id.tie ) {
-				int value = Integer.parseInt(((TextView)view).getText().toString());
-				((TextView)view).setText(String.valueOf(value+chipValue));
+			// Change the value of each option
+			if (view.getId() == R.id.banker) {
+				bankerBet += chipValue;
+				((TextView) view).setText(String.valueOf(bankerBet));
+			}
+			if (view.getId() == R.id.player) {
+				playerBet += chipValue;
+				((TextView) view).setText(String.valueOf(playerBet));
+			}
+			if (view.getId() == R.id.tie) {
+				tieBet += chipValue;
+				((TextView) view).setText(String.valueOf(tieBet));
 			}
 			return true;
 		case DragEvent.ACTION_DRAG_EXITED:
 			// Drag exited view bounds
-			// If called for trash can then reset it.
-			if (view.getId() == R.id.banker || view.getId() == R.id.player || view.getId() == R.id.tie ) {
-				int value = Integer.parseInt(((TextView)view).getText().toString());
-				((TextView)view).setText(String.valueOf(value-chipValue));
+			// Change back the value
+			if (view.getId() == R.id.banker) {
+				bankerBet -= chipValue;
+				((TextView) view).setText(String.valueOf(bankerBet));
+			}
+			if (view.getId() == R.id.player) {
+				playerBet -= chipValue;
+				((TextView) view).setText(String.valueOf(playerBet));
+			}
+			if (view.getId() == R.id.tie) {
+				tieBet -= chipValue;
+				((TextView) view).setText(String.valueOf(tieBet));
 			}
 			return true;
 		case DragEvent.ACTION_DRAG_LOCATION:
@@ -145,6 +177,19 @@ public class Baccarat extends Activity implements OnLongClickListener,OnDragList
 
 		}
 		return false;
+	}
+
+	@Override
+	public void onClick(View v) {
+		final Event e= buttons.get(v.getId());
+		switch(e){
+		case DEAL:
+			if(bankerBet+playerBet+tieBet>0){
+				//deal card
+			}
+			break;
+		}
+		
 	}
 
 	

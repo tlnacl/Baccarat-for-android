@@ -89,7 +89,25 @@
     	    android:layout_above="@id/banker"
     	    android:text="0"
     	    ></TextView>
-   	    
    	</RelativeLayout>
+   	
+   	<LinearLayout android:id="@+id/actionButtons"
+   	    android:layout_width="wrap_content" 
+    	android:layout_height="wrap_content"
+   		android:layout_alignParentBottom="true"
+   		android:layout_centerHorizontal="true">
+   	    <Button android:id="@+id/deal"
+   	        android:layout_width="wrap_content"
+   	        android:layout_height="wrap_content"
+   	        android:background="@drawable/deal"/>
+   	    <Button android:id="@+id/clear"
+   	        android:layout_width="wrap_content"
+   	        android:layout_height="wrap_content"
+   	        android:background="@drawable/clear"/>
+   	    <Button android:id="@+id/newgame"
+   	        android:layout_width="wrap_content"
+   	        android:layout_height="wrap_content"
+   	        android:background="@drawable/newgame"/>
+   	</LinearLayout>
 
 </RelativeLayout>
