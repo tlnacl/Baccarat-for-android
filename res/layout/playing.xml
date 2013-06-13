@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="@drawable/baccarat" >
+    
+    <RelativeLayout 
+    	android:id="@+id/chipButtons" 
+    	android:layout_width="wrap_content" 
+    	android:layout_height="wrap_content"
+   		android:layout_alignParentRight="true"
+   		android:layout_centerVertical="true"
+   		android:layout_marginRight="10dp">
+    
+    	<!-- 5 -->
+    	<ImageView 
+   			android:layout_height="wrap_content" 
+   			android:layout_width="wrap_content" 
+    		android:src="@drawable/chips10" 
+    		android:id="@+chip/chips10"
+    		android:paddingLeft="15dp"
+    		android:paddingRight="15dp"
+    		android:paddingTop="5dp"
+    		android:paddingBottom="5dp"/>
+    	<!-- 25 -->
+    	<ImageView 
+    		android:layout_height="wrap_content" 
+    		android:layout_width="wrap_content" 
+    		android:src="@drawable/chips25" 
+  			android:id="@+chip/chips25" 
+   			android:layout_below="@chip/chips10"
+   	    	android:layout_marginTop="5dp"
+   	    	android:paddingLeft="15dp"
+    		android:paddingRight="15dp"
+    		android:paddingTop="5dp"
+    		android:paddingBottom="5dp"/>
+    	<!-- 100 -->
+    	<ImageView 
+    		android:layout_height="wrap_content" 
+    		android:layout_width="wrap_content" 
+   			android:src="@drawable/chips100" 
+   			android:id="@+chip/chips100" 
+    		android:layout_below="@chip/chips25"
+   			android:layout_marginTop="5dp"
+   			android:paddingLeft="15dp"
+    		android:paddingRight="15dp"
+    		android:paddingTop="5dp"
+    		android:paddingBottom="5dp"/>
+    	<!-- 500 -->
+    	<ImageView
+    		android:layout_height="wrap_content" 
+   			android:layout_width="wrap_content" 
+   			android:src="@drawable/chips1k" 
+   			android:id="@+chip/chips1k" 
+   			android:layout_below="@chip/chips100"
+     		android:layout_marginTop="5dp"
+     		android:paddingLeft="15dp"
+    		android:paddingRight="15dp"
+    		android:paddingTop="5dp"
+    		android:paddingBottom="5dp"/>
+     		
+   	</RelativeLayout>
+   	
+   	<RelativeLayout android:id="@+id/options" 
+    	android:layout_width="wrap_content" 
+    	android:layout_height="wrap_content"
+   		android:layout_alignParentBottom="true"
+   		android:layout_centerHorizontal="true"
+   		android:layout_marginBottom="70dp">
+    	<TextView android:layout_width="100dp"
+    	    android:layout_height="40dp"
+    	    android:gravity="center"
+    	    android:id="@+id/player"
+    	    android:layout_alignParentBottom="true"
+    	    android:text="0"
+    	    ></TextView>
+    	<TextView android:layout_width="100dp"
+    	    android:layout_height="40dp"
+    	    android:gravity="center"
+    	    android:id="@+id/banker"
+    	    android:layout_above="@id/player"
+    	    android:text="0"
+    	    ></TextView>
+    	<TextView android:layout_width="100dp"
+    	    android:layout_height="40dp"
+    	    android:gravity="center"
+    	    android:id="@+id/tie"
+    	    android:layout_above="@id/banker"
+    	    android:text="0"
+    	    ></TextView>
+   	</RelativeLayout>
+   	
+   	<LinearLayout android:id="@+id/actionButtons"
+   	    android:layout_width="wrap_content" 
+    	android:layout_height="wrap_content"
+   		android:layout_alignParentBottom="true"
+   		android:layout_centerHorizontal="true">
+   	    <Button android:id="@+id/deal"
+   	        android:layout_width="wrap_content"
+   	        android:layout_height="wrap_content"
+   	        android:background="@drawable/deal"/>
+   	    <Button android:id="@+id/clear"
+   	        android:layout_width="wrap_content"
+   	        android:layout_height="wrap_content"
+   	        android:background="@drawable/clear"/>
+   	    <Button android:id="@+id/newgame"
+   	        android:layout_width="wrap_content"
+   	        android:layout_height="wrap_content"
+   	        android:background="@drawable/newgame"/>
+   	</LinearLayout>
+
+</RelativeLayout>
