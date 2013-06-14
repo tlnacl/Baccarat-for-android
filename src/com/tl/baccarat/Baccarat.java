@@ -45,6 +45,8 @@ public class Baccarat extends Activity implements OnLongClickListener,OnDragList
 	LinearLayout playerView;
 	TextView bankerValueView;
 	TextView playerValueView;
+	TextView walletView;
+	Wallet wallet;// cents
 	
 	
 	int bankerValue = 0;
@@ -63,7 +65,9 @@ public class Baccarat extends Activity implements OnLongClickListener,OnDragList
 		bankerBet = 0;
 		tieBet = 0;
 		
-		
+		wallet = new Wallet(10000);
+		walletView = (TextView)findViewById(R.id.walletView);
+		walletView.setText(wallet.getBalance());
 		//deal, clear, play buttons
 //		buttons = new HashMap<Integer,Event>();
 //		buttons.put(R.id.deal, Event.DEAL);
@@ -76,7 +80,7 @@ public class Baccarat extends Activity implements OnLongClickListener,OnDragList
 //			if(entry.equals(R.id.newgame)) button.setVisibility(View.GONE);
 //		}
 		
-		//chips
+		//Draw chips
 				chips = new HashMap<Integer,Event>();
 				
 				chips.put(R.chip.chips10, Event.CHIP10);
@@ -90,6 +94,7 @@ public class Baccarat extends Activity implements OnLongClickListener,OnDragList
 					chipView.setTag(entry);
 				}
 				
+				//Draw button
 				deal = (Button)findViewById(R.id.deal);
 				deal.setOnClickListener(this);
 				clear = (Button)findViewById(R.id.clear);
@@ -111,14 +116,16 @@ public class Baccarat extends Activity implements OnLongClickListener,OnDragList
 		clear.setVisibility(View.VISIBLE);
 		newGame.setVisibility(View.GONE);
 		
-		//game init
-//		decks=1; splits=1; burns=(byte)(5.0*Math.random()); shuffleTimes = 3;
+		//New shoe every round can change to shuffle deck when card number low
 		shoe = new Deck(1,1,3);
 		
 		banker = new ArrayList<Card>();
 		player = new ArrayList<Card>();
 	}
 	
+	/**
+	 * long click then can move the chips
+	 */
 	@Override
 	public boolean onLongClick(View v) {
 		final Event e= chips.get(v.getId());
@@ -172,16 +179,23 @@ public class Baccarat extends Activity implements OnLongClickListener,OnDragList
 			// Drag has entered view bounds
 			// Change the value of each option
 			if (view.getId() == R.id.banker) {
+//				caculateValue(bankerBet,view,chipValue);
 				bankerBet += chipValue;
 				((TextView) view).setText(String.valueOf(bankerBet));
+				wallet.withdraw(chipValue);
+				walletView.setText(wallet.getBalance());
 			}
 			if (view.getId() == R.id.player) {
 				playerBet += chipValue;
 				((TextView) view).setText(String.valueOf(playerBet));
+				wallet.withdraw(chipValue);
+				walletView.setText(wallet.getBalance());
 			}
 			if (view.getId() == R.id.tie) {
 				tieBet += chipValue;
 				((TextView) view).setText(String.valueOf(tieBet));
+				wallet.withdraw(chipValue);
+				walletView.setText(wallet.getBalance());
 			}
 			return true;
 		case DragEvent.ACTION_DRAG_EXITED:
@@ -190,14 +204,20 @@ public class Baccarat extends Activity implements OnLongClickListener,OnDragList
 			if (view.getId() == R.id.banker) {
 				bankerBet -= chipValue;
 				((TextView) view).setText(String.valueOf(bankerBet));
+				wallet.deposit(chipValue);
+				walletView.setText(wallet.getBalance());
 			}
 			if (view.getId() == R.id.player) {
 				playerBet -= chipValue;
 				((TextView) view).setText(String.valueOf(playerBet));
+				wallet.deposit(chipValue);
+				walletView.setText(wallet.getBalance());
 			}
 			if (view.getId() == R.id.tie) {
 				tieBet -= chipValue;
 				((TextView) view).setText(String.valueOf(tieBet));
+				wallet.deposit(chipValue);
+				walletView.setText(wallet.getBalance());
 			}
 			return true;
 		case DragEvent.ACTION_DRAG_LOCATION:
@@ -215,13 +235,23 @@ public class Baccarat extends Activity implements OnLongClickListener,OnDragList
 		}
 		return false;
 	}
+	
+	
+
+//	private synchronized void  caculateValue(int value,View view,int chipValue) {
+//		System.out.println("value:"+value+"chipValue"+chipValue);
+//		value += chipValue;
+//		((TextView) view).setText(String.valueOf(value));
+//		wallet.deposit(chipValue);
+//		walletView.setText(wallet.getBalance());
+//	}
 
 	@Override
 	public void onClick(View v) {
 		if(v.getId() == R.id.deal){
 			if(bankerBet+playerBet+tieBet>0){
 				//deal card
-				initBaccarate();
+				playBaccarate();
 			}
 		} else if(v.getId() == R.id.clear){ 
 			bankerBet = 0;
@@ -241,6 +271,9 @@ public class Baccarat extends Activity implements OnLongClickListener,OnDragList
 		//clear player and Banker
 		banker.clear();
 		player.clear();
+		
+		bankerValue = 0;
+		playerValue = 0;
 		
 		bankerBet = 0;
 		playerBet = 0;
@@ -263,7 +296,7 @@ public class Baccarat extends Activity implements OnLongClickListener,OnDragList
 		
 	}
 
-	public void initBaccarate(){
+	public void playBaccarate(){
 		for(final Integer entry: chips.keySet()) {
 			View chipView = findViewById(entry);
 			chipView.setVisibility(View.GONE);
@@ -277,8 +310,6 @@ public class Baccarat extends Activity implements OnLongClickListener,OnDragList
 	    
 	    int bankerScore = bankerValue%10;
 	    int playerScore = playerValue%10;
-	    bankerValueView.setText(String.valueOf(bankerScore));
-	    playerValueView.setText(String.valueOf(playerScore));
 	    
 	    deal.setVisibility(View.GONE);
 	    clear.setVisibility(View.GONE);
@@ -335,7 +366,7 @@ public class Baccarat extends Activity implements OnLongClickListener,OnDragList
 	    player.add(shoe.drawCard());
 	    playerView.addView(cardImage);
 	    playerValue += card.getScore();
-	    
+	    System.out.println("card"+card.getValue()+"playerValue"+playerValue);
 	    return card;
 	}
 	
@@ -347,15 +378,29 @@ public class Baccarat extends Activity implements OnLongClickListener,OnDragList
 	    banker.add(shoe.drawCard());
 	    bankerView.addView(cardImage);
 	    bankerValue += card.getScore();
+	    System.out.println("card"+card.getValue()+"bankerValue"+bankerValue);
+
 	}
 
-	/**
-	 * 
-	 */
+
 	private void gameend() {
 		int bankerScore = bankerValue%10;
 	    int playerScore = playerValue%10;
+	    TextView resultView = (TextView)findViewById(R.id.resultView);
+	    if (bankerScore>playerScore){
+	    	resultView.setText("Banker Win");
+	    	wallet.depositCents(bankerBet * 195);
+	    }else if (bankerScore == playerScore){
+	    	resultView.setText("Tie");
+	    	wallet.depositCents(playerBet * 200);
+	    }else{
+	    	resultView.setText("Player Win");
+	    	wallet.depositCents(tieBet * 900);
+	    }
 	    
+	    bankerValueView.setText(String.valueOf(bankerScore));
+	    playerValueView.setText(String.valueOf(playerScore));
+	    walletView.setText(wallet.getBalance());
 	}
 	
 
