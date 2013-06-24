@@ -23,7 +23,7 @@ public class Baccarat extends Activity implements OnLongClickListener,
 	static float BIG_TEXTSIZE = 30;
 	static float DEFAULT_TEXTSIZE = 20;
 
-	static BaccarateService bs = new BaccarateService();
+	static BaccarateService bs = new BaccarateServiceImp();
 
 	Map<Integer, Event> chips;
 	int chipValue;
