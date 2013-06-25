@@ -36,7 +36,8 @@ public interface BaccarateService {
 	
 	public void clear();
 
-	public String getResult();
+	//0-banker win, 1-player win, 2-tie.
+	public int getResult();
 
 	public boolean deal();
 }

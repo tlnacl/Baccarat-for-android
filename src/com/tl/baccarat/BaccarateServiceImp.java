@@ -26,7 +26,7 @@ public class BaccarateServiceImp implements BaccarateService {
 	private int bankerValue;
 	private int playerValue;
 
-	private String result;
+	private int result;
 
 	public BaccarateServiceImp() {
 		wallet = new Wallet(10000);
@@ -95,7 +95,7 @@ public class BaccarateServiceImp implements BaccarateService {
 		return playerScore;
 	}
 
-	public String getResult() {
+	public int getResult() {
 		return result;
 	}
 
@@ -188,8 +188,8 @@ public class BaccarateServiceImp implements BaccarateService {
 		Card card = shoe.drawCard();
 		bankerCards.add(card);
 		bankerValue += card.getScore();
-		System.out.println("card" + card.getValue() + "bankerValue"
-				+ bankerValue);
+//		System.out.println("card" + card.getValue() + "bankerValue"
+//				+ bankerValue);
 	}
 
 	private void gameend() {
@@ -197,15 +197,15 @@ public class BaccarateServiceImp implements BaccarateService {
 		playerScore = playerValue % 10;
 
 		if (bankerScore > playerScore) {
-			result = "Banker Win";
+			result = 0;
 			wallet.depositCents(bankerBet * 195);
 		} else if (bankerScore == playerScore) {
-			result = "Tie";
-			wallet.depositCents(playerBet * 200);
-		} else {
-			result = "Player Win";
+			result = 2;
 			wallet.depositCents(tieBet * 900);
+		} else {
+			result = 1;
+			wallet.depositCents(playerBet * 200);
 		}
-
+//		System.out.println("bankerScore" + bankerScore + "playerScore"+playerScore + "result" + result);
 	}
 }

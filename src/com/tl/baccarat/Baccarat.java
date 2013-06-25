@@ -4,11 +4,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.app.Activity;
+import android.app.Service;
 import android.content.ClipData;
 import android.content.ClipDescription;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.DragEvent;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnDragListener;
@@ -22,6 +26,11 @@ public class Baccarat extends Activity implements OnLongClickListener,
 		OnDragListener, OnClickListener {
 	static float BIG_TEXTSIZE = 30;
 	static float DEFAULT_TEXTSIZE = 20;
+	static String BANKER_WIN = "Banker Win";
+	static String PLAYER_WIN = "Player Win";
+	static String TIE = "Tie";
+	
+	AudioManager audio;
 
 	static BaccarateService bs = new BaccarateServiceImp();
 
@@ -37,6 +46,10 @@ public class Baccarat extends Activity implements OnLongClickListener,
 	TextView bankerValueView;
 	TextView playerValueView;
 	TextView walletView;
+	
+	private MediaPlayer bankerWin;
+	private MediaPlayer playerWin;
+	private MediaPlayer tie;
 
 	public static enum Event {
 		CHIP10, CHIP25, CHIP100, CHIP1K, DEAL, CLEAN, NEWGAME
@@ -81,8 +94,13 @@ public class Baccarat extends Activity implements OnLongClickListener,
 				.getChildAt(1);
 		playerValueView = (TextView) ((LinearLayout) findViewById(R.id.playerView))
 				.getChildAt(1);
+		
+		bankerWin = MediaPlayer.create(getBaseContext(), R.raw.bankerwin);
+		playerWin = MediaPlayer.create(getBaseContext(), R.raw.playerwin);
+		tie = MediaPlayer.create(getBaseContext(), R.raw.tie);
 
 		initUI();
+		audio = (AudioManager) getSystemService(Service.AUDIO_SERVICE);
 	}
 
 	void initUI() {
@@ -230,7 +248,7 @@ public class Baccarat extends Activity implements OnLongClickListener,
 					cardImage = new ImageView(this);
 					cardImage.setImageResource(card.getImage());
 					bankerView.addView(cardImage);
-					System.out.println("banker cardView"+card.getValue());
+					Log.d(getLocalClassName(),"banker cardView"+card.getValue());
 				}
 				// player View
 				for (Card card : bs.getPlayerCards()) {
@@ -238,7 +256,7 @@ public class Baccarat extends Activity implements OnLongClickListener,
 					cardImage = new ImageView(this);
 					cardImage.setImageResource(card.getImage());
 					playerView.addView(cardImage);
-					System.out.println("player cardView"+card.getValue());
+					Log.d(getLocalClassName(),"player cardView"+card.getValue());
 				}
 
 				//
@@ -246,7 +264,17 @@ public class Baccarat extends Activity implements OnLongClickListener,
 				playerValueView.setText(String.valueOf(bs.getPlayerScore()));
 				walletView.setText(bs.getWallet().getBalance());
 				TextView resultView = (TextView) findViewById(R.id.resultView);
-				resultView.setText(bs.getResult());
+				if(bs.getResult() == 0) {
+					resultView.setText(BANKER_WIN);
+					bankerWin.start();
+				} else if(bs.getResult() == 1){
+					resultView.setText(PLAYER_WIN);
+					playerWin.start();
+				} else if(bs.getResult() == 2){
+					resultView.setText(TIE);
+					tie.start();
+				} 
+				
 			}
 
 		} else if (v.getId() == R.id.clear) {
@@ -275,4 +303,24 @@ public class Baccarat extends Activity implements OnLongClickListener,
 
 	}
 
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+	    switch (keyCode) {
+	    case KeyEvent.KEYCODE_VOLUME_UP:
+	        audio.adjustStreamVolume(
+	            AudioManager.STREAM_MUSIC,
+	            AudioManager.ADJUST_RAISE,
+	            AudioManager.FLAG_PLAY_SOUND | AudioManager.FLAG_SHOW_UI);
+	        return true;
+	    case KeyEvent.KEYCODE_VOLUME_DOWN:
+	        audio.adjustStreamVolume(
+	            AudioManager.STREAM_MUSIC,
+	            AudioManager.ADJUST_LOWER,
+	            AudioManager.FLAG_PLAY_SOUND | AudioManager.FLAG_SHOW_UI);
+	        return true;
+	    default:
+	        break;
+	    }
+	    return super.onKeyDown(keyCode, event);
+	}
 }
