@@ -97,11 +97,14 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
     }
     public static final class id {
         public static final int actionButtons=0x7f080005;
+        public static final int backGame=0x7f08000f;
         public static final int banker=0x7f080003;
         public static final int bankerView=0x7f08000a;
         public static final int chipButtons=0x7f080000;
         public static final int clear=0x7f080007;
         public static final int deal=0x7f080006;
+        public static final int gameHistory=0x7f08000e;
+        public static final int history=0x7f08000d;
         public static final int newgame=0x7f080008;
         public static final int options=0x7f080001;
         public static final int player=0x7f080002;
@@ -112,7 +115,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
     }
     public static final class layout {
         public static final int activity_baccarat=0x7f030000;
-        public static final int playing=0x7f030001;
+        public static final int history=0x7f030001;
     }
     public static final class raw {
         public static final int bankerwin=0x7f040000;

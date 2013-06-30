@@ -5,7 +5,7 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="12"
+        android:minSdkVersion="14"
         android:targetSdkVersion="16" />
 
     <application
@@ -14,16 +14,22 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.tl.baccarat.Baccarat"
+            android:name="com.tl.baccarat.BaccaratController"
             android:screenOrientation="landscape"
-            android:label="@string/app_name"
-            android:theme="@style/FullscreenTheme" >
+            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!-- 
+        <activity
+            android:name="com.tl.baccarat.GameHistoryController"
+            android:screenOrientation="landscape"
+            android:theme="@style/FullscreenTheme" >
+
+        </activity>
+             -->
     </application>
 
 </manifest>
